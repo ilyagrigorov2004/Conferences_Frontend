@@ -9,7 +9,7 @@
     "icons": [
       {
         "src": "/Conferences_Frontend/logo.png",
-        "type": "image/png", "sizes": "256х256"
+        "type": "image/png", "sizes": "192x192"
       }
     ]
   }

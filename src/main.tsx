@@ -5,6 +5,8 @@ import AuthorsPage from './pages/AuthorsPage'
 import MainPage from './pages/MainPage'
 import AuthorPage from './pages/AuthorPage'
 import { ROUTES } from './modules/Routes'
+import { store } from './store'
+import { Provider } from "react-redux";
 
 const router = createBrowserRouter([
   {
@@ -22,5 +24,14 @@ const router = createBrowserRouter([
 ])
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
+  <Provider store={store}>
     <RouterProvider router={router} />
+  </Provider>
 )
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker
+      .register("/serviceWorker.js")
+  })
+}

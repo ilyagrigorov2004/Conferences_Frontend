@@ -1,0 +1,42 @@
+
+.author-img{
+    max-width: 14em
+}
+
+@media(min-width:1000px){
+    .authorBox{
+        width: 80%;
+        margin-left: 10%!important;
+    }
+}
+
+@media (max-width: 790px) {
+    .author-description {
+        font-size: 12px
+    }
+    .author-img{
+        max-width: 11em
+    }
+}
+
+@media (max-width: 650px) {
+    .author-img{
+        max-width: 10em
+    }
+}
+
+
+@media (max-width: 566px) {
+    .authorContentBox {
+        flex-direction: column;
+    }
+
+    .author-description{
+        width: 100%;
+        margin-left: 0!important;
+    }
+    
+    .img-box {
+        width: 100%!important;
+    }
+}

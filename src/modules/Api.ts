@@ -1,4 +1,5 @@
 import { AUTHORS_MOCK } from './Mock'
+
 export interface AuthorI {
     author_id: number
     name: string
@@ -27,6 +28,7 @@ export const getAuthors = async (search_author = ""): Promise<AuthorsI> => {
             if (author.name.includes(search_author) || author.department.includes(search_author))
                 result.authors.push(author)
         })
+
         return result
     })
 }
@@ -35,9 +37,6 @@ export const getAuthor = async (id: number): Promise<AuthorI> => {
     return fetch(`/api/Author/${id}/`).then(
         (response) => response.json()
     ).catch(() => {
-        AUTHORS_MOCK.authors.forEach((author: AuthorI) => {
-            if (author.author_id === id)
-                return author
+            return AUTHORS_MOCK.authors.find((author: AuthorI) => author.author_id === id)
         })
-    })
 }

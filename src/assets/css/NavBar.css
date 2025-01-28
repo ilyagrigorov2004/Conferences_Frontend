@@ -1,0 +1,28 @@
+@import url('./fonts.css');
+
+.NavbarButtons{
+    font-family: Roboto;
+    font-size: 20px;
+}
+
+.NavbarBrand{
+    background-color:#ffffff;
+text-decoration: none;
+color:#5a72b5;
+text-align:center;
+font-size:2em;
+font-family:Roboto;
+width:12em;
+font-weight: bold;
+}
+
+.divHeader{
+    background-color:#ffffff;
+    height:5em;
+    width:90%;
+    filter:drop-shadow(0px 4px 10px rgba(0.3529411852359772,0.4470588266849518,0.7098039388656616,1));
+    border-radius:0px 0px 16px 16px;
+    padding:0px;
+    left:5%;
+    overflow: hidden;
+}

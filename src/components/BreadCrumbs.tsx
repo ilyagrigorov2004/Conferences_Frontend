@@ -17,7 +17,7 @@ export const BreadCrumbs: FC<BreadCrumbsProps> = (props) => {
   const { crumbs } = props;
 
   return (
-    <ul className="breadcrumbs">
+    <ul className="breadcrumbs ms-3">
       <li>
         <Link to={ROUTES.HOME}>Главная</Link>
       </li>

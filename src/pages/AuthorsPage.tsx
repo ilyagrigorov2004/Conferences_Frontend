@@ -1,62 +1,69 @@
-import { FC, useEffect, useState } from 'react'
-import { AuthorI, getAuthors } from '../modules/Api'
-import NavigationBar from '../components/NavBar'
+import { FC, useEffect} from 'react'
+import { useIsAuthenticated } from '../slices/userSlice'
 import AuthorCard from '../components/AuthorCard'
 import { Button } from 'react-bootstrap'
 import InputField from '../components/InputField'
 import { BreadCrumbs } from '../components/BreadCrumbs'
-import { ROUTE_LABELS } from '../modules/Routes'
-import { setSearchValueAction, useSearchValue } from '../slices/dataSlice'
+import { ROUTE_LABELS, ROUTES } from '../modules/Routes'
+import { setSearchValueAction, useSearchValue, getAuthorsList, useAuthors } from '../slices/AuthorsSlice'
+import { AppDispatch } from '../store'
 import { useDispatch } from 'react-redux'
+import { Link } from 'react-router-dom'
+import '../assets/css/authorsPage.css'
+import {useAuthorsInConfCount, useConfId } from '../slices/conferenceSlice'
+import BasePage from './BasePage'
 
 const AuthorsPage: FC = () => {
 
-    const [authors, setAuthors] = useState<AuthorI[]>([])
-    const [searchAuthor, setSearchAuthor] = useState('')
+    const dispatch = useDispatch<AppDispatch>();
+    const isAuthenticated = useIsAuthenticated();
+    const conf_id = useConfId();
+    const authors_in_conf_count = useAuthorsInConfCount();
 
-    const storedSearchValue = useSearchValue()
-    const dispatch = useDispatch()
+    const search_value = useSearchValue();
+    const authors = useAuthors();
 
-    const updateAuthors = (searchAuthorVar = '') => {
-        if (searchAuthorVar == '') searchAuthorVar = searchAuthor
-        dispatch(setSearchValueAction(searchAuthorVar))
+    useEffect(() => {      
+        dispatch(getAuthorsList());
+    },[dispatch])
 
-        getAuthors(searchAuthorVar).then((response) => {
-            setAuthors(response.authors)
-        })
-    }
-
-    useEffect(() => {
-        setSearchAuthor(storedSearchValue)
-        updateAuthors(storedSearchValue)
-    }, [])
-
-    const handleSearch = () => {
-        updateAuthors()
+    const setSearchValue = (value: string ) => {
+        dispatch(setSearchValueAction(value))
     }
 
     return (
         <>
-            <NavigationBar></NavigationBar>
+            <BasePage>
             <BreadCrumbs crumbs={[{label: ROUTE_LABELS.AUTHORS}]}></BreadCrumbs>
             <div className='d-flex flex-column '>
-                <div className='d-flex w-100 justify-content-between align-items-start'>
+                <div className='d-flex w-100 justify-content-around align-items-start' style={{height: '5em'}}>
                     <div className='d-flex justify-content-start align-items-center w-75'>
-                        <InputField value={searchAuthor} setValue={setSearchAuthor} placeholder='Введите ФИО или кафедру' inputClass='InputField' />
-                        <Button className='ms-3 d-flex align-items-center justify-content-center' variant='primary' onClick={handleSearch} style={{ width: '5em', height:'2em', backgroundColor:'#5a72b5'}}>Поиск</Button>
+                        <InputField value={search_value} setValue={setSearchValue} placeholder='Введите ФИО или кафедру' inputClass='InputField' date={false} valuetype="string"/>
+                        <Button className='ms-3 d-flex align-items-center justify-content-center my-btn ' onClick={() => dispatch(getAuthorsList())} style={{ width: '5em', height:'2em'}}>Поиск</Button>
                     </div>
-                    {/* <img src='/src/assets/img/empty_basket.png' className='me-3' style={{height: "3rem"}}></img> */}
+                    {(!isAuthenticated || !conf_id) ? 
+                    <img src='/img/empty_basket.png' className='basket_img'></img>
+                    : (
+                        <div>
+                        <Link to={`${ROUTES.CONFERENCES}/${conf_id}`}>
+                            <img src='/img/full_basket.png' className='basket_img'></img>
+                        </Link>
+                        <div className='authors_in_conf_count'>{authors_in_conf_count}</div>
+                        </div>
+                    )}
+
                 </div>
                 <div className='d-flex flex-row' style={{justifyContent: 'center'}}>
                 <div className='d-flex flex-wrap gap-5 me-4 mt-5 mb-5 w-100' style={{ maxWidth: '1200px', justifyContent: 'center'}}>
                     {authors.map((author) => {
                         return (
-                            <AuthorCard key={author.author_id} id={author.author_id} FIO={author.name} url={author.url} dep={author.department}></AuthorCard>
+                            <AuthorCard key={author.author_id} id={author.author_id!} FIO={author.name!} url={author.url || '/img/no_photo_author.png'} dep={author.department!}></AuthorCard>
                         )
                     })}
                 </div>
                 </div>
             </div>
+            </BasePage>
         </>
     )
 }

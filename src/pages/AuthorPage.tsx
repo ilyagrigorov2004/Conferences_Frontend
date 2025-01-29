@@ -1,10 +1,9 @@
 import { FC, useEffect, useState } from 'react'
 import { useParams } from "react-router-dom"
 import { AuthorI, getAuthor } from '../modules/Api'
-import Navigationbar from '../components/NavBar'
 import { BreadCrumbs } from '../components/BreadCrumbs'
 import '../assets/css/AuthorPage.css'
-import {img_proxy_addr} from '../../target-config'
+import BasePage from './BasePage'
 
 const AuthorPage: FC = () => {
 
@@ -31,7 +30,7 @@ const AuthorPage: FC = () => {
 
     return (
         <>
-            <Navigationbar/>
+            <BasePage>
             <BreadCrumbs crumbs={[
                 {
                     label: 'Авторы',
@@ -45,7 +44,7 @@ const AuthorPage: FC = () => {
                 <div className='container-fluid mt-3'>
                     <div className='authorContentBox row justify-content-center ps-3'>
                         <div className='img-box col-3 d-flex justify-content-center align-items-start mb-3' style={{ borderRadius: "10px"}}>
-                            <img src={author?.url.replace('http://localhost:9000', img_proxy_addr) || '/img/no_photo_author.png'} className='author-img ' style={{ borderRadius: "10px" }}></img>
+                            <img src={author?.url.replace('http://localhost:9000', '') || '/img/no_photo_author.png'} className='author-img ' style={{ borderRadius: "10px" }}></img>
                         </div>
                         <div className='author-description ms-3 col-8 mt-2'>
                             <div style={{ fontFamily: 'Roboto', fontSize: '2em' }}>{author?.name}</div>
@@ -56,6 +55,7 @@ const AuthorPage: FC = () => {
                     </div>
                 </div>
             </div>
+            </BasePage>
         </>
     )
 }

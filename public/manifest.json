@@ -1,15 +1,15 @@
 {
     "name": "Конференции МГТУ",
     "short_name": "Конференции МГТУ",
-    "start_url": "/Conferences_Frontend/", 
+    "start_url": "/RepoName/", 
     "display": "standalone",
     "background_color": "#fdfdfd",
     "theme_color": "#db4938",
     "orientation": "portrait-primary",
     "icons": [
       {
-        "src": "/Conferences_Frontend/logo.png",
-        "type": "image/png", "sizes": "192x192"
+        "src": "/logo.png",
+        "type": "image/png", "sizes": "256х256"
       }
     ]
   }

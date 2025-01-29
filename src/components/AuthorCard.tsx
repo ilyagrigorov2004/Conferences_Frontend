@@ -3,6 +3,7 @@ import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../modules/Routes';
 import '../assets/css/fonts.css'
+import {img_proxy_addr} from '../../target-config'
 
 interface AuthorCardProps {
     id: number
@@ -17,7 +18,7 @@ const AuthorCard: FC<AuthorCardProps> = (
     return (
         <Card style={{ width: '15rem', height: '24rem', filter: 'drop-shadow(0px 4px 10px rgba(0,0,0,0.75))' }} >
             <Link className='d-flex flex-column justify-content-center align-items-center'style={{ width: '100%', height: '70%' }} to={`${ROUTES.AUTHORS}/${id}`}>
-            <Card.Img className='mt-3' style={{ width: '85%', height: '90%' }} src={url.replace('http://localhost:9000', '') || '/Conferences_Frontend/img/no_photo_author.png'}/>
+            <Card.Img className='mt-3' style={{ width: '85%', height: '90%' }} src={url.replace('http://localhost:9000', img_proxy_addr) || '/img/no_photo_author.png'}/>
             </Link>
             <Card.Body className='d-flex flex-column text-start justify-content-space-between'>
             <Card.Title style={{ fontFamily: 'Roboto', fontSize: '1em'}}>{FIO}</Card.Title>

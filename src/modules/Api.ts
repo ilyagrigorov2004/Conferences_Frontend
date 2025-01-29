@@ -1,4 +1,5 @@
 import { AUTHORS_MOCK } from './Mock'
+import {api_proxy_addr} from '../../target-config'
 
 export interface AuthorI {
     author_id: number
@@ -20,7 +21,7 @@ export interface AuthorsI {
 }
 
 export const getAuthors = async (search_author = ""): Promise<AuthorsI> => {
-    return fetch(`/api/Authors/?search_author=${search_author}`).then(
+    return fetch(api_proxy_addr + `/Authors/?search_author=${search_author}`).then(
         (response) => response.json()
     ).catch(() => {
         let result: AuthorsI = { current_conference: AUTHORS_MOCK.current_conference, authors: [] }
@@ -34,7 +35,7 @@ export const getAuthors = async (search_author = ""): Promise<AuthorsI> => {
 }
 
 export const getAuthor = async (id: number): Promise<AuthorI> => {
-    return fetch(`/api/Author/${id}/`).then(
+    return fetch(api_proxy_addr + `/Author/${id}/`).then(
         (response) => response.json()
     ).catch(() => {
             return AUTHORS_MOCK.authors.find((author: AuthorI) => author.author_id === id)

@@ -1,20 +1,20 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import {api_proxy_addr, img_proxy_addr} from './target-config'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/Conferences_Frontend',
   server: {
     port: 3000,
     host: '0.0.0.0',
     proxy: {
       "/api": {
-        target: "http://localhost:8000",
+        target: api_proxy_addr,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
       "/conferencesimgs":{
-        target: "http://localhost:9000/conferencesimgs",
+        target: img_proxy_addr,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/conferencesimgs/, ""),
       }

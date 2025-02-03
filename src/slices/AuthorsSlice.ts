@@ -10,14 +10,16 @@ interface AuthorsState{
     SearchValue: string,
     Authors: Author[],
     loading: boolean,
-    error: string | null
+    error: string | null,
+
 }
 
 const initialState: AuthorsState = {
     SearchValue: '',
     Authors: [],
     loading: false,
-    error: null
+    error: null,
+
 }
 
 export const getAuthorsList = createAsyncThunk(
@@ -117,6 +119,7 @@ const authorsSlice = createSlice({
         setError: (state, action) => {
             state.error = action.payload;
         },
+
     },
     extraReducers: (builder) => {
         builder.addCase(getAuthorsList.pending, (state) => {
@@ -171,6 +174,18 @@ const authorsSlice = createSlice({
             }
         });
         builder.addCase(uploadImage.rejected, (state, { payload }) => {
+            state.loading = false;
+            state.error = payload as string;
+        });
+
+        builder.addCase(getAuthor.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        });
+        builder.addCase(getAuthor.fulfilled, (state, { payload }) => {
+            state.loading = false;
+        });
+        builder.addCase(getAuthor.rejected, (state, { payload }) => {
             state.loading = false;
             state.error = payload as string;
         });

@@ -64,9 +64,11 @@ const AuthorsListPage: FC = () => {
                             ></AuthorChangeCard>
                         )
                     })}
-                    <AuthorChangeCard ></AuthorChangeCard>
+                    <AuthorChangeCard></AuthorChangeCard>
                 </div>
+                
                 </div>
+
             </div>
             </BasePage>
         </>

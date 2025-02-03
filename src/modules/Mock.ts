@@ -1,6 +1,4 @@
-import { AuthorsI } from "./Api";
-
-export const AUTHORS_MOCK: AuthorsI = {
+export const AUTHORS_MOCK  = {
     current_conference: {
         id: 0,
         authors_count: 0
@@ -27,5 +25,35 @@ export const AUTHORS_MOCK: AuthorsI = {
             'birthdate': '1980-10-12',
             'author_id': 3
             },
+    ],
+    attrs:[
+        {
+            'id': 1,
+            'author_id': 1,
+            'attr_id': 1,
+            'name': 'Институциональная экономика',
+            'value': '1'
+        },
+        {
+            'id': 2,
+            'author_id': 1,
+            'attr_id': 2,
+            'name': 'Фискальная политика',
+            'value': '222'
+        },
+        {
+            'id': 3,
+            'author_id': 1,
+            'attr_id': 3,
+            'name': 'Экономическое неравенство',
+            'value': '333'
+        },
+        {
+            'id': 4,
+            'author_id': 1,
+            'attr_id': 4,
+            'name': 'Экологическая экономика',
+            'value': '444'
+        },
     ]
 }

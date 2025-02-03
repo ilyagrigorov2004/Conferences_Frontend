@@ -5,13 +5,17 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 import '../assets/css/fonts.css'
+import '../assets/css/authorChangeCard.css'
 
 import { updateAuthor, uploadImage, addAuthor } from '../slices/AuthorsSlice';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../store';
-import { Author } from '../api/Api';
+import { getAuthorsAttrs, useAttrs, setOpenCardId } from '../slices/AttrsSlice';
+import { Attrib } from "../slices/AttrsSlice"
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store';
+import { Author,  } from '../api/Api';
 
 import { setError} from '../slices/conferenceSlice';
+import AuthorsAttrCard from './AuthorAttrCard';
 
 interface AuthorCardProps {
     id?: number
@@ -21,15 +25,19 @@ interface AuthorCardProps {
     status?: string
     description?: string
     birthdate?: string
+
 }
 
 const AuthorChangeCard: FC<AuthorCardProps> = (
     { id, name, imageUrl, department, status, description, birthdate }
 ) => {
-    const [formData, setFormData] = useState<Author>({ author_id: 0, name: '', url: '', department: '', status: '', description: '', birthdate:'' });
+    const [formData, setFormData] = useState<Author>({ author_id: 0, name: '', url: '', department: '', status: '', description: '', birthdate:''});
+
+    const attributes = useAttrs();
+    const openCardId = useSelector((state: RootState) => state.attributes.openCardId);
     const dispatch = useDispatch<AppDispatch>();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    
+
     const handleUpload = async (id: string) => {
         if (!selectedFile) {
             return;
@@ -73,7 +81,22 @@ const AuthorChangeCard: FC<AuthorCardProps> = (
           ...formData,
           [name]: value,
         });
-      };
+    };
+
+    const toggleAttributes = () => {
+        if (openCardId === id) {
+            dispatch(setOpenCardId(null));
+        } else {
+            if (id) 
+                dispatch(getAuthorsAttrs({authorId: id}))
+            dispatch(setOpenCardId(id));
+        }
+        console.log(openCardId);
+    };
+
+    const onChangeFunc = () => {
+        dispatch(getAuthorsAttrs({authorId: id!}))
+    }
 
     useEffect(() => {      
         setFormData({
@@ -83,13 +106,19 @@ const AuthorChangeCard: FC<AuthorCardProps> = (
             department: department ? department.toString() : '',
             status: status || '',
             description: description || '',
-            birthdate: birthdate || '',
+            birthdate: birthdate || ''
         });
-    },[dispatch, imageUrl]);
+    },[dispatch, imageUrl, attributes, openCardId]);
+
+    useEffect(() => {
+        if (id) {
+            
+        }
+    }, [attributes, id, dispatch]);
 
     return (
         
-            <Card className='shadow shadow-bg w-100' >
+            <Card key={id} className='shadow shadow-bg w-100' >
                 <Card.Body className='d-flex flex-row align-items-center'>
                     
                     <div className='d-flex flex-row w-100 h-100 flex-grow'>
@@ -162,6 +191,9 @@ const AuthorChangeCard: FC<AuthorCardProps> = (
                                     className="form-control2"   
                                 />
                             </Form.Group>
+                            <Button className='my-btn ' style={{height: '40px', marginTop: '30px'}} onClick={toggleAttributes}>
+                                {openCardId === id ? 'Скрыть атрибуты' : 'Показать атрибуты'}
+                            </Button>
                         </div>
                         <div className='d-flex flex-row justify-content-end'>
                             {id && (<Button className="me-1" style={{height: '5em', width: '9em'}} variant="outline-danger " onClick={() => handleUpload(id.toString())}>Изменить изображение</Button>)}
@@ -171,6 +203,22 @@ const AuthorChangeCard: FC<AuthorCardProps> = (
                     </Form>
                     </div>
                 </Card.Body>
+
+                {openCardId === id && (
+                    <div className={`additional-attributes ${openCardId === id ? 'show' : ''}`}>
+                        {attributes.map((attr: Attrib) => (
+                            <AuthorsAttrCard
+                                key={attr.id}
+                                author_id={id || 0}
+                                attr_id={attr.attr_id}
+                                name={attr.name}
+                                value={attr.value}
+                                onChange={onChangeFunc}
+                            ></AuthorsAttrCard>
+                        ))}
+                        <AuthorsAttrCard key="new-attr" attr_id={0} onChange={onChangeFunc}></AuthorsAttrCard>
+                    </div>
+                )}
             </Card>
     )
 }

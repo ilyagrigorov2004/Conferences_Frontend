@@ -9,6 +9,7 @@ import { setError as setUserError } from '../slices/userSlice'
 import { setError as setConferenceError } from '../slices/conferenceSlice'
 import { setError as setAuthorsError } from '../slices/AuthorsSlice'
 import { setError as setConferencesError } from '../slices/conferencesSlice'
+import { setError as setAttrsError} from '../slices/AttrsSlice'
 
 interface Props {
     children: React.ReactNode
@@ -20,14 +21,16 @@ const BasePage: FC<Props> = ({ children }) => {
         state.user.error || 
         state.authors.error || 
         state.conference.error ||
-        state.conferences.error
+        state.conferences.error ||
+        state.attributes.error
     );
 
     const loaderStatus = useSelector((state: RootState) => 
         state.conference.loading || 
         state.authors.loading ||
         state.user.loading ||
-        state.conferences.loading 
+        state.conferences.loading ||
+        state.attributes.loading
     );
     const dispatch = useDispatch();
 
@@ -38,6 +41,7 @@ const BasePage: FC<Props> = ({ children }) => {
                 dispatch(setConferenceError(''));
                 dispatch(setAuthorsError(''));
                 dispatch(setConferencesError(''));
+                dispatch(setAttrsError(''))
             }, 3000);
         }
     });

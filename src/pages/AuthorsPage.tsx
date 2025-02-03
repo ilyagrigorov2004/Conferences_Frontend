@@ -1,4 +1,5 @@
 import { FC, useEffect} from 'react'
+import { Author } from '../api/Api'
 import { useIsAuthenticated, useIsCurator } from '../slices/userSlice'
 import AuthorCard from '../components/AuthorCard'
 import { Button } from 'react-bootstrap'
@@ -28,7 +29,7 @@ const AuthorsPage: FC = () => {
 
     useEffect(() => {      
         dispatch(getAuthorsList());
-    },[dispatch])
+    },[])
 
     const setSearchValue = (value: string ) => {
         dispatch(setSearchValueAction(value))
@@ -61,7 +62,7 @@ const AuthorsPage: FC = () => {
                 </div>
                 <div className='d-flex flex-row' style={{justifyContent: 'center'}}>
                 <div className='d-flex flex-wrap gap-5 me-4 mt-5 mb-5 w-100' style={{ maxWidth: '1200px', justifyContent: 'center'}}>
-                    {authors.map((author) => {
+                    {authors.map((author: Author) => {
                         return (
                             <AuthorCard key={author.author_id} id={author.author_id!} FIO={author.name!} url={author.url || '/img/no_photo_author.png'} dep={author.department!}></AuthorCard>
                         )

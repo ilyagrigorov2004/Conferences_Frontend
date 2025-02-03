@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { Author } from '../api/Api'
 import { AppDispatch } from '../store'
 import { getAuthor } from '../slices/AuthorsSlice'
+import { getAuthorsAttrs, useAttrs } from '../slices/AttrsSlice'
 import { BreadCrumbs } from '../components/BreadCrumbs'
 import '../assets/css/AuthorPage.css'
 import BasePage from './BasePage'
@@ -23,6 +24,7 @@ const AuthorPage: FC = () => {
     const dispatch: AppDispatch = useDispatch()
     const { id } = useParams()
     const navigate = useNavigate()
+    const attributes = useAttrs();
 
     useEffect(() => {
         if (!id) return
@@ -34,9 +36,12 @@ const AuthorPage: FC = () => {
                 navigate(ROUTES.PAGE_404)
                 return;
             }
-            else setAuthor(response.payload)
+            else {
+                setAuthor(response.payload)
+                dispatch(getAuthorsAttrs({ authorId: id_numeric }));
+            }
         })
-        }, [dispatch, id, navigate])
+    }, [dispatch, id, navigate])
 
     return (
         <>
@@ -62,6 +67,14 @@ const AuthorPage: FC = () => {
                             <div style={{ fontFamily: 'Roboto', fontSize: '1.5em' }}>Кафедра: {author?.department}</div>
                             <div style={{ fontFamily: 'Roboto', fontSize: '1.5em' }}>Дата рождения: {author?.birthdate ? new Date(author.birthdate).toLocaleDateString('ru-RU') : 'Неизвестно'}</div>
                         </div>
+                    </div>
+                    <div className='attributes mt-4 mb-3'>
+                        <h3>Дополнительно</h3>
+                        {attributes.map((attr) => (
+                            <div key={attr.id} className='attribute'>
+                                <strong>{attr.name}:</strong> {attr.value || 'Не указано'}
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

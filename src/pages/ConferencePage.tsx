@@ -75,7 +75,7 @@ const ConferencePage: FC = () => {
             <BreadCrumbs crumbs={[
                 {
                     label: 'Конференции',
-                    path: '/conference'
+                    path: '/conferences'
                 },
                 {
                     label: 'Конференция №' + id?.toString() || '',

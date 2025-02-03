@@ -9,6 +9,38 @@
  * ---------------------------------------------------------------
  */
 
+export interface Attribute {
+  /** ID */
+  id?: number;
+  /**
+   * Name
+   * @minLength 1
+   */
+  name?: string;
+}
+
+export interface AttributeAuthor {
+  /** ID */
+  id?: number;
+  /** Attr id */
+  attr_id?: number;
+  /** Author id */
+  author_id?: number;
+  /**
+   * Value
+   * @minLength 1
+   */
+  value?: string;
+}
+
+export interface EditAttrValue {
+  /**
+   * Value
+   * @minLength 1
+   */
+  value?: string;
+}
+
 export interface Author {
   /** Author id */
   author_id?: number;
@@ -333,6 +365,83 @@ export class HttpClient<SecurityDataType = unknown> {
  * Test description
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  attribute = {
+    /**
+     * No description
+     *
+     * @tags Attribute
+     * @name AttributeAddCreate
+     * @request POST:/Attribute/add/
+     * @secure
+     */
+    attributeAddCreate: (data: Attribute, params: RequestParams = {}) =>
+      this.request<Attribute, any>({
+        path: `/Attribute/add/`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Attribute
+     * @name AttributeGetAuthorsAttrList
+     * @request GET:/Attribute/{author_id}/getAuthorsAttr/
+     * @secure
+     */
+    attributeGetAuthorsAttrList: (authorId: string, params: RequestParams = {}) =>
+      this.request<AttributeAuthor, any>({
+        path: `/Attribute/${authorId}/getAuthorsAttr/`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Attribute
+     * @name AttributeAddAuthorsAttrUpdate
+     * @request PUT:/Attribute/{author_id}/{attr_id}/addAuthorsAttr/
+     * @secure
+     */
+    attributeAddAuthorsAttrUpdate: (
+      authorId: string,
+      attrId: string,
+      data: EditAttrValue,
+      params: RequestParams = {},
+    ) =>
+      this.request<EditAttrValue, any>({
+        path: `/Attribute/${authorId}/${attrId}/addAuthorsAttr/`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Attribute
+     * @name AttributeDelete
+     * @request DELETE:/Attribute/{id}/
+     * @secure
+     */
+    attributeDelete: (id: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/Attribute/${id}/`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+  };
   author = {
     /**
      * No description
@@ -564,7 +673,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     conferenceConfirmUpdate: (
       id: string,
       query?: {
-        is_confirmed?: number;
+        is_сonfirmed?: number;
       },
       params: RequestParams = {},
     ) =>

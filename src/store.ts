@@ -3,6 +3,7 @@ import authorsSlice from "./slices/AuthorsSlice"
 import ConferenceSlice from "./slices/conferenceSlice"
 import userSlice from "./slices/userSlice"
 import conferencesClice from "./slices/conferencesSlice"
+import AttrsSlice from "./slices/AttrsSlice"
 
 export const store = configureStore({
     reducer: combineReducers({
@@ -10,6 +11,7 @@ export const store = configureStore({
         conference: ConferenceSlice,
         user: userSlice,
         conferences: conferencesClice,
+        attributes: AttrsSlice
     })
 })
 

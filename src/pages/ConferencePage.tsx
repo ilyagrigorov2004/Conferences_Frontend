@@ -50,6 +50,7 @@ const ConferencePage: FC = () => {
         if (id) {
             try {
                 dispatch(saveConference(id));
+                
                 navigate(ROUTES.AUTHORS);
             } catch (error) {
                 dispatch(setError(error));
@@ -59,7 +60,12 @@ const ConferencePage: FC = () => {
 
     useEffect(() => {
         if (id) {
-            dispatch(getConf(id));
+            dispatch(getConf(id)).then((response) => {
+                if (response.type.includes('rejected')) {
+                navigate(ROUTES.PAGE_404);
+                return
+            }
+            });
         }
     }, [dispatch]);
     
@@ -135,7 +141,7 @@ const ConferencePage: FC = () => {
                     <h2>Участники</h2>
                     <div className="d-flex flex-column">
                         {authors.length ? (
-                            authors.map((author, index) => (
+                            authors.map((author: any, index: number) => (
                                 <Col key={author.author?.author_id || index} className="mb-3">
                                     <AuthorCard
                                         id={author.author?.author_id || 11}

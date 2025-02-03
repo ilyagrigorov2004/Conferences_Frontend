@@ -2,7 +2,7 @@ import React, { useState, FormEvent, useEffect } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store';
-import { changePersonalDataAsync, setError } from '../slices/userSlice';
+import { changePersonalDataAsync, setError, useIsAuthenticated } from '../slices/userSlice';
 import { useNavigate } from "react-router-dom";
 import { ROUTES, ROUTE_LABELS } from '../modules/Routes';
 import BasePage from './BasePage';
@@ -15,6 +15,7 @@ const LKPage: React.FC = () => {
     const [formData, setFormData] = useState({ username: '', password: '', first_name: '', last_name: '', email: '', password_confirm: '' });
     const username = useSelector((state: RootState) => state.user.username);
     const data = useSelector((state: RootState) => state.user.data);
+    const isAuthenticated = useIsAuthenticated();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -38,6 +39,10 @@ const LKPage: React.FC = () => {
     };
 
     useEffect(() => {      
+        if (!isAuthenticated) {
+            navigate(ROUTES.PAGE_403);
+            return;
+        }
         dispatch(changePersonalDataAsync({}));
         setFormData({username: username, first_name: data.first_name, last_name: data.last_name, email: data.email, password: '', password_confirm: ''});
     },[dispatch])

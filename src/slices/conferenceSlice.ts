@@ -142,7 +142,8 @@ const ConferenceSlice = createSlice({
             state.review_result = initialState.review_result;
             state.isDraft = initialState.isDraft;
             state.authors_in_conf_count = initialState.authors_in_conf_count
-        }
+        },
+        
     },
     extraReducers: (builder) => {
         builder

@@ -1,5 +1,5 @@
 import { FC, useEffect} from 'react'
-import { useIsAuthenticated } from '../slices/userSlice'
+import { useIsAuthenticated, useIsCurator } from '../slices/userSlice'
 import AuthorCard from '../components/AuthorCard'
 import { Button } from 'react-bootstrap'
 import InputField from '../components/InputField'
@@ -8,7 +8,7 @@ import { ROUTE_LABELS, ROUTES } from '../modules/Routes'
 import { setSearchValueAction, useSearchValue, getAuthorsList, useAuthors } from '../slices/AuthorsSlice'
 import { AppDispatch } from '../store'
 import { useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import '../assets/css/authorsPage.css'
 import {useAuthorsInConfCount, useConfId } from '../slices/conferenceSlice'
 import BasePage from './BasePage'
@@ -16,9 +16,12 @@ import BasePage from './BasePage'
 const AuthorsPage: FC = () => {
 
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const isAuthenticated = useIsAuthenticated();
+    const isCurator = useIsCurator();
     const conf_id = useConfId();
     const authors_in_conf_count = useAuthorsInConfCount();
+    
 
     const search_value = useSearchValue();
     const authors = useAuthors();
@@ -41,6 +44,9 @@ const AuthorsPage: FC = () => {
                         <InputField value={search_value} setValue={setSearchValue} placeholder='Введите ФИО или кафедру' inputClass='InputField' date={false} valuetype="string"/>
                         <Button className='ms-3 d-flex align-items-center justify-content-center my-btn ' onClick={() => dispatch(getAuthorsList())} style={{ width: '5em', height:'2em'}}>Поиск</Button>
                     </div>
+                    {(isAuthenticated && isCurator) ? 
+                        <Button className='mt-2 ms-3' variant='outline-danger' onClick={() => navigate(ROUTES.AUTHORS_CHANGE)} style={{ width: '180px' }}>Изменить авторов</Button>
+                    : null}
                     {(!isAuthenticated || !conf_id) ? 
                     <img src='/img/empty_basket.png' className='basket_img'></img>
                     : (

@@ -41,6 +41,14 @@ export interface Author {
   birthdate?: string;
 }
 
+export interface AddPic {
+  /**
+   * Image
+   * @format uri
+   */
+  image?: string;
+}
+
 export interface AuthorsListResponsee {
   authors: Author[];
   /** Draft conference id */
@@ -111,63 +119,6 @@ export interface SingleConf {
    */
   review_result?: number | null;
   authors?: MMwithAuthor[];
-}
-
-export interface Conference {
-  /** Conference id */
-  conference_id?: number;
-  /**
-   * Status
-   * @minLength 1
-   */
-  status?: string;
-  /**
-   * Date created
-   * @format date-time
-   */
-  date_created?: string;
-  /**
-   * Creator
-   * @pattern ^[\w.@+-]+$
-   */
-  creator?: string;
-  /**
-   * Date formed
-   * @format date-time
-   */
-  date_formed?: string | null;
-  /**
-   * Date ended
-   * @format date-time
-   */
-  date_ended?: string | null;
-  /**
-   * Moderator
-   * @pattern ^[\w.@+-]+$
-   */
-  moderator?: string;
-  /**
-   * Conf start date
-   * @format date-time
-   */
-  conf_start_date?: string | null;
-  /**
-   * Conf end date
-   * @format date-time
-   */
-  conf_end_date?: string | null;
-  /**
-   * Members count
-   * @min -2147483648
-   * @max 2147483647
-   */
-  members_count?: number | null;
-  /**
-   * Review result
-   * @min -2147483648
-   * @max 2147483647
-   */
-  review_result?: number | null;
 }
 
 export interface UserLK {
@@ -457,13 +408,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/Author/{id}/imgUpload/
      * @secure
      */
-    authorImgUploadCreate: (id: string, data: Author, params: RequestParams = {}) =>
-      this.request<Author, any>({
+    authorImgUploadCreate: (id: string, params: RequestParams = {}) =>
+      this.request<AddPic, any>({
         path: `/Author/${id}/imgUpload/`,
         method: "POST",
-        body: data,
+        body: params.data,
         secure: true,
-        format: "json",
         ...params,
       }),
   };
@@ -611,14 +561,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/Conference/{id}/confirm/
      * @secure
      */
-    conferenceConfirmUpdate: (id: string, data: Conference, params: RequestParams = {}) =>
-      this.request<Conference, any>({
+    conferenceConfirmUpdate: (
+      id: string,
+      query?: {
+        is_confirmed?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
         path: `/Conference/${id}/confirm/`,
         method: "PUT",
-        body: data,
+        query: query,
         secure: true,
-        type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 

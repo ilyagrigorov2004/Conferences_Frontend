@@ -1,23 +1,40 @@
 import { FC, useEffect } from 'react'
 import { Button } from 'react-bootstrap'
 import BasePage from './BasePage'
-import { useDispatch} from 'react-redux'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { getConferences, setSearchConferencesValues, useConfSearchValues, useConferences } from '../slices/conferencesSlice'
-import { ROUTE_LABELS } from '../modules/Routes'
+import { ROUTES, ROUTE_LABELS } from '../modules/Routes'
 import { BreadCrumbs } from '../components/BreadCrumbs'
 import { AppDispatch } from '../store'
 import InputField from '../components/InputField'
 import ConferenceCard from '../components/ConferenceCard'
+import { useIsAuthenticated, useIsCurator } from '../slices/userSlice'
 
 const ConferencesPage: FC = () => {
 
+    const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
     const conferences = useConferences();
     const ConfSearchValues = useConfSearchValues() ;
+    const isAuthenticated = useIsAuthenticated();
+    const isCurator = useIsCurator();
+    
 
     useEffect(() => {      
-        dispatch(getConferences());
+        if (!isAuthenticated) {
+            navigate(ROUTES.PAGE_403);
+            return;
+        }
+        const intervalId = setInterval(() => {
+            dispatch(getConferences())
+        }, 2000) // Polling every 2 seconds
+        return () => clearInterval(intervalId)
     },[dispatch])
+
+    useEffect(() => {
+        dispatch(getConferences())
+    },[])
     
     const getStatustranslate = (status_text: string | undefined) => {
         switch (status_text) {
@@ -32,6 +49,14 @@ const ConferencesPage: FC = () => {
 
     const setSearchValue = (val: { [key: string]: string }) => {
         dispatch(setSearchConferencesValues(val))
+    }
+
+    const filterConferencesByCreator = () => {
+        if (!Array.isArray(conferences)) return [];
+        const filteredConferences = conferences.filter(conf => 
+            conf.creator.toLowerCase().includes(ConfSearchValues.creator.toLowerCase())
+        )
+        return filteredConferences;    
     }
 
     return (
@@ -51,7 +76,7 @@ const ConferencesPage: FC = () => {
                     >
                         <option value=''>Выберите статус</option>
                         <option value='formed'>Сформирована</option>
-                        <option value='confirmed'>Утверждена</option>
+                        <option value='confirmed'>Подтверждена</option>
                         <option value='rejected'>Отклонена</option>
                     </select>
                     <h5>Фильтр по дате формирования:</h5>
@@ -63,10 +88,19 @@ const ConferencesPage: FC = () => {
                     <div style={{ width: '20%' }}>Максимальная дата:</div>
                     <InputField value={ConfSearchValues.max_date_formed} setValue={(value, valuetype) => setSearchValue({ [valuetype!]: value })} valuetype='max_date_formed' placeholder='Максимальная дата' inputClass='InputField' date={true}/>
                     </div>
+                    {isCurator && (
+                        <>
+                            <h5>Фильтр по организатору:</h5>
+                            <div className='d-flex gap-3'>
+                                <div style={{ width: '20%' }}>Имя организатора:</div>
+                                <InputField value={ConfSearchValues.creator} setValue={(value, valuetype) => setSearchValue({ [valuetype!]: value })} valuetype='creator' placeholder='Организатор' inputClass='InputField' date={false}/>
+                            </div>
+                        </>
+                    )}
                     <Button className='mt-3 ms-3 my-btn'  onClick={() => dispatch(getConferences())} style={{ width: '100px' }}>Поиск</Button>
                 </div>
                 <div className='d-flex flex-column gap-3'>
-                    {conferences?.length === 0 ? <h5>Конференции не найдены</h5> : conferences?.map((conference) => {
+                    {filterConferencesByCreator()?.length === 0 ? <h5>Конференции не найдены</h5> : filterConferencesByCreator()?.map((conference) => {
                         return (
                             <ConferenceCard 
                                 key={conference.conference_id}
@@ -80,7 +114,8 @@ const ConferencesPage: FC = () => {
                                 members_count={conference.members_count}
                                 review_result={conference.review_result}
                                 conf_start_date={conference.conf_start_date ? new Date(conference.conf_start_date).toLocaleString('ru-RU') : '-'}
-                                conf_end_date={conference.conf_end_date ? new Date(conference.conf_end_date).toLocaleString('ru-RU') : '-'}>
+                                conf_end_date={conference.conf_end_date ? new Date(conference.conf_end_date).toLocaleString('ru-RU') : '-'}
+                                qr = {conference.qr as string}>
                             </ConferenceCard>
                         )
                     })}

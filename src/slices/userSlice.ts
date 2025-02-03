@@ -7,6 +7,7 @@ import { RootState } from '../store';
 interface UserState {
   username: string;
   isAuthenticated: boolean;
+  isCurator: boolean;
     data: {
         first_name: string;
         last_name: string;
@@ -18,6 +19,7 @@ interface UserState {
 // дебаг-версия
 const initialState: UserState = {
   username: '',
+  isCurator: false,
   data: {
     first_name: '',
     last_name: '',
@@ -94,7 +96,13 @@ const userSlice = createSlice({
             .addCase(loginUserAsync.fulfilled, (state, action) => {
                 const { username } = action.payload;
                 state.username = username;
+                state.data = {
+                  first_name: action.payload.first_name,
+                  last_name: action.payload.last_name,
+                  email: action.payload.email,
+                };
                 state.isAuthenticated = true;
+                state.isCurator = action.payload.is_staff || action.payload.is_superuser;
                 state.error = null;
                 state.loading = false;
             })
@@ -109,6 +117,8 @@ const userSlice = createSlice({
             .addCase(logoutUserAsync.fulfilled, (state) => {
                 state.username = '';
                 state.isAuthenticated = false;
+                state.data = initialState.data
+                state.isCurator = false;
                 state.error = null;
                 state.loading = false;
             })
@@ -120,14 +130,22 @@ const userSlice = createSlice({
                 state.error = null;
                 state.loading = true;
             })
-            .addCase(registerUserAsync.fulfilled, (state) => {
+            .addCase(registerUserAsync.fulfilled, (state, action) => {
                 state.error = null;
                 state.loading = false;
+                const { username } = action.payload;
+                state.username = username;
+                state.data = {
+                  first_name: action.payload.first_name,
+                  last_name: action.payload.last_name,
+                  email: action.payload.email,
+                };
             })
             .addCase(registerUserAsync.rejected, (state, action) => {
                 state.error = action.payload as string;
                 state.isAuthenticated = false;
                 state.loading = false;
+                
             })
             
             .addCase(changePersonalDataAsync.pending, (state) => {
@@ -151,6 +169,7 @@ const userSlice = createSlice({
 
 export const useIsAuthenticated = () => useSelector((state: RootState) => state.user.isAuthenticated);
 export const useUsername = () => useSelector((state: RootState) => state.user.username);
+export const useIsCurator = () => useSelector((state: RootState) => state.user.isCurator);
 
 export const {setError} = userSlice.actions;
 export default userSlice.reducer;

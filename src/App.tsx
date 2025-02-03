@@ -8,6 +8,10 @@ import ConferencePage from './pages/ConferencePage';
 import RegistrationPage from './pages/RegistrationPage';
 import LKPage from './pages/LKPage';
 import ConferencesPage from './pages/ConferencesPage';
+import AuthorsListPage from './pages/AuthorsListPage';
+import Page404 from './pages/Page404';
+import Page403 from './pages/Page403';
+
 
 function App() {
   return (
@@ -22,6 +26,9 @@ function App() {
           <Route path={ROUTES.CONFERENCES} element={<ConferencesPage />} />
           <Route path={ROUTES.REGISTRATION} element={<RegistrationPage />} />
           <Route path={ROUTES.ACCOUNT} element={<LKPage />} />
+          <Route path={ROUTES.AUTHORS_CHANGE} element={<AuthorsListPage />} />
+          <Route path={ROUTES.PAGE_404} element={<Page404 />} />
+          <Route path={ROUTES.PAGE_403} element={<Page403 />} />
         </Routes>
       </BrowserRouter>
     </>

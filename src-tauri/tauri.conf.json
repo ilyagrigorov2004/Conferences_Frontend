@@ -5,7 +5,7 @@
   "identifier": "conferences",
   "build": {
     "frontendDist": "../dist",
-    "devUrl": "http://192.168.129.233:3000",
+    "devUrl": "http://192.168.62.233:3000",
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build"
   },

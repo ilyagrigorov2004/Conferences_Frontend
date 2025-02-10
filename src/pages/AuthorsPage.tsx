@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { AuthorI, getAuthors } from '../modules/Api'
+import { AuthorsI, AuthorI, getAuthors } from '../modules/Api'
 import NavigationBar from '../components/NavBar'
 import AuthorCard from '../components/AuthorCard'
 import { Button } from 'react-bootstrap'
@@ -8,6 +8,7 @@ import { BreadCrumbs } from '../components/BreadCrumbs'
 import { ROUTE_LABELS } from '../modules/Routes'
 import { setSearchValueAction, useSearchValue } from '../slices/dataSlice'
 import { useDispatch } from 'react-redux'
+import { AUTHORS_MOCK } from '../modules/Mock'
 
 const AuthorsPage: FC = () => {
 
@@ -18,12 +19,26 @@ const AuthorsPage: FC = () => {
     const dispatch = useDispatch()
 
     const updateAuthors = (searchAuthorVar = '') => {
+        let getRes = false
         if (searchAuthorVar == '') searchAuthorVar = searchAuthor
         dispatch(setSearchValueAction(searchAuthorVar))
 
         getAuthors(searchAuthorVar).then((response) => {
             setAuthors(response.authors)
+            getRes = true
         })
+
+        setTimeout(() => {
+            if (!getRes) {
+                let result: AuthorsI = { current_conference: AUTHORS_MOCK.current_conference, authors: [] };
+                AUTHORS_MOCK.authors.forEach((author: AuthorI) => {
+                    if (author.name.includes(searchAuthorVar) || author.department.includes(searchAuthorVar)) {
+                        result.authors.push(author);
+                    }
+                });
+                setAuthors(result.authors)
+            }
+        }, 1000);
     }
 
     useEffect(() => {

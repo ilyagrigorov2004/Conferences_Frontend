@@ -5,6 +5,7 @@ import Navigationbar from '../components/NavBar'
 import { BreadCrumbs } from '../components/BreadCrumbs'
 import '../assets/css/AuthorPage.css'
 import {img_proxy_addr} from '../../target-config'
+import { AUTHORS_MOCK } from '../modules/Mock'
 
 const AuthorPage: FC = () => {
 
@@ -23,10 +24,21 @@ const AuthorPage: FC = () => {
         if (!id) return
         let id_numeric: number = parseInt(id)
         if (isNaN(id_numeric)) return
+        let gotRes = false
 
         getAuthor(id_numeric).then((response) => {
+            gotRes = true
             setAuthor(response)
         })
+
+        setTimeout(() => {
+            if (!gotRes) {
+            const foundAuthor = AUTHORS_MOCK.authors.find((author: AuthorI) => author.author_id == id_numeric);
+            if (foundAuthor) {
+                setAuthor(foundAuthor);
+            }
+            }
+        }, 1000);
     }, [])
 
     return (

@@ -673,7 +673,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     conferenceConfirmUpdate: (
       id: string,
       query?: {
-        is_сonfirmed?: number;
+        is_confirmed?: number;
       },
       params: RequestParams = {},
     ) =>

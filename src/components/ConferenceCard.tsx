@@ -128,7 +128,7 @@ const ConferenceCard: FC<ConfCardProps> = (
                         </div>
                     )}
                     <div className="conf-icon">
-                    {status === 'formed' ? (
+                    {status === 'Сформирована' ? (
                         <img className="status-icon" src="/img/time.png" alt="Time Icon" />
                     ) : (
                         <div className="qr-hover-wrapper">

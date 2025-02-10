@@ -66,7 +66,7 @@ const ConferencesPage: FC = () => {
                         label: ROUTE_LABELS.CONFERENCES
                     }
             ]}></BreadCrumbs>
-            <div className='container-fluid d-flex flex-column justify-content-center mt-5 border shadow shadow-bg p-3'>
+            <div className='container-fluid d-flex flex-column justify-content-center mt-5 mb-5 border shadow shadow-bg p-3'>
                 <h3>Конференции</h3>
                 <div className='d-flex flex-column justify-content-start w-75 mb-4'>
                     <select 

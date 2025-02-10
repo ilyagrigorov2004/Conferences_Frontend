@@ -64,7 +64,7 @@ export const confirmConference = createAsyncThunk(
     'Conferences/confirmConference',
     async (id: number, { rejectWithValue }) => {
         try {
-            const response = await api.conference.conferenceConfirmUpdate(id.toString(),  {"is_сonfirmed": 1});
+            const response = await api.conference.conferenceConfirmUpdate(id.toString(),  {"is_confirmed": 1});
             return response.data;
         } catch (error) {
             return rejectWithValue('Ошибка при подтверждении конференции');
@@ -76,7 +76,7 @@ export const rejectConference = createAsyncThunk(
     'Conferences/rejectConference',
     async (id: number, { rejectWithValue }) => {
         try {
-            const response = await api.conference.conferenceConfirmUpdate(id.toString(),  {"is_сonfirmed": 0});
+            const response = await api.conference.conferenceConfirmUpdate(id.toString(),  {"is_confirmed": 0});
             return response.data;
         } catch (error) {
             return rejectWithValue('Ошибка при отклонении конференции');

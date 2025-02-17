@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store";
 import { api } from '../api';
 import { AUTHORS_MOCK } from '../modules/Mock';
+import { apiCallWithRefresh } from './userSlice';
 
 export interface Attrib{
     attr_id: number,
@@ -28,21 +29,21 @@ const initialState: AttrsState = {
 
 export const getAuthorsAttrs = createAsyncThunk(
     'attributes/getAuthorsAttrs',
-    async ({ authorId }: { authorId: number }) => {
-        const response = await api.attribute.attributeGetAuthorsAttrList(
+    async ({ authorId }: { authorId: number }, { dispatch }) => {
+        const response = await apiCallWithRefresh(dispatch, () => api.attribute.attributeGetAuthorsAttrList(
             authorId.toString(),
-        );
+        ));
         return response.data;
     }
 );
 
 export const addAttribute = createAsyncThunk(
     'attributes/addAttribute',
-    async ({ name }: { name: string }, { rejectWithValue }) => {
+    async ({ name }: { name: string }, { dispatch, rejectWithValue }) => {
         try {
-            const response = await api.attribute.attributeAddCreate({
+            const response = await apiCallWithRefresh(dispatch, () => api.attribute.attributeAddCreate({
                 name,
-            });
+            }));
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.error || 'Ошибка при добавлении атрибута');
@@ -52,13 +53,13 @@ export const addAttribute = createAsyncThunk(
 
 export const editAttribute = createAsyncThunk(
     'attributes/editAttribute',
-    async ({ authorId, attrId, value}: { authorId: number, attrId: number, value: string}, { rejectWithValue }) => {
+    async ({ authorId, attrId, value}: { authorId: number, attrId: number, value: string}, { dispatch, rejectWithValue }) => {
         try {
-            const response = await api.attribute.attributeAddAuthorsAttrUpdate(
+            const response = await apiCallWithRefresh(dispatch, () => api.attribute.attributeAddAuthorsAttrUpdate(
                 authorId.toString(),
                 attrId.toString(),
                 { value }
-            );
+            ));
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.error || 'Ошибка при изменении атрибута');
@@ -68,11 +69,11 @@ export const editAttribute = createAsyncThunk(
 
 export const deleteAttribute = createAsyncThunk(
     'attributes/deleteAttribute',
-    async ({ attrId }: { attrId: number }, { rejectWithValue }) => {
+    async ({ attrId }: { attrId: number }, { dispatch, rejectWithValue }) => {
         try {
-            const response = await api.attribute.attributeDelete(
+            const response = await apiCallWithRefresh(dispatch, () => api.attribute.attributeDelete(
                 attrId.toString()
-            );
+            ));
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response?.data?.error || 'Ошибка при удалении атрибута');

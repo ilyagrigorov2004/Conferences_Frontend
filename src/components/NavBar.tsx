@@ -25,7 +25,7 @@ const NavigationBar: FC = () => {
         dispatch(resetAuthorsStateAction());
         dispatch(resetConferenceState());
         dispatch(resetConferencesState());
-        navigate('/authors'); // переход на страницу списка услуг
+        navigate('/'); // переход на главную
         await dispatch(getAuthorsList()); // для показа очищения поля поиска
     }
 

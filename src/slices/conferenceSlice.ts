@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { api } from '../api';
+import { apiCallWithRefresh } from './userSlice';
 
 interface ConferenceState {
     conf_id?: number;
@@ -46,62 +47,62 @@ const initialState: ConferenceState = {
 
 export const getConf = createAsyncThunk(
     'Conference/getConference',
-    async (ConferenceId: string) => {
-        const response = await api.conference.conferenceRead(ConferenceId);
+    async (ConferenceId: string, { dispatch }) => {
+        const response = await apiCallWithRefresh(dispatch, () => api.conference.conferenceRead(ConferenceId));
         return response.data;
     }
 );
 
 export const addAuthorToConference = createAsyncThunk(
     'Conference/addAuthorToConference',
-    async (authorId: number) => {
-        const response = await api.author.authorAddToConferenceCreate(authorId.toString());
+    async (authorId: number, { dispatch }) => {
+        const response = await apiCallWithRefresh(dispatch, () => api.author.authorAddToConferenceCreate(authorId.toString()));
         return response.data;
     }
 );
 
 export const deleteConference = createAsyncThunk(
     'Conference/deleteConference',
-    async (ConferenceId: string) => {
-        const response = await api.conference.conferenceDelete(ConferenceId);
+    async (ConferenceId: string, { dispatch }) => {
+        const response = await apiCallWithRefresh(dispatch, () => api.conference.conferenceDelete(ConferenceId));
         return response.data;
     }
 );
 
 export const updateConferenceFields = createAsyncThunk(
     'Conference/updateConference',
-    async ({ ConferenceId, conf_start_date, conf_end_date, review_result }: { ConferenceId: string; conf_start_date: string; conf_end_date:string; review_result: number }) => {
-      const response = await api.conference.conferenceUpdate(ConferenceId, { conf_start_date: conf_start_date, conf_end_date: conf_end_date, review_result });
+    async ({ ConferenceId, conf_start_date, conf_end_date, review_result }: { ConferenceId: string; conf_start_date: string; conf_end_date:string; review_result: number }, { dispatch }) => {
+      const response = await apiCallWithRefresh(dispatch, () => api.conference.conferenceUpdate(ConferenceId, { conf_start_date: conf_start_date, conf_end_date: conf_end_date, review_result }));
       return response.data;
     }
 );
 
 export const saveConference = createAsyncThunk(
     'Conference/saveConference',
-    async (ConferenceId: string) => {
-        const response = await api.conference.conferenceFormUpdate(ConferenceId);
+    async (ConferenceId: string, { dispatch }) => {
+        const response = await apiCallWithRefresh(dispatch, () => api.conference.conferenceFormUpdate(ConferenceId));
         return response.data;
     }
 );
 
 export const deleteAuthorFromConference = createAsyncThunk(
     'Conference/deleteAuthorFromConference',
-    async ({ ConferenceId, authorId }: { ConferenceId: number; authorId: number }) => {
-      await api.authorInConf.authorInConfDelete(
+    async ({ ConferenceId, authorId }: { ConferenceId: number; authorId: number }, { dispatch }) => {
+      await apiCallWithRefresh(dispatch, () => api.authorInConf.authorInConfDelete(
         ConferenceId.toString(),
         authorId.toString()
-      ); 
+      )); 
     }
 );
 
 export const updateAuthorDetails = createAsyncThunk(
     'Conference/updateAuthorDetails',
-    async ({ ConferenceId, authorId, is_corresponding }: { ConferenceId: number; authorId: number; is_corresponding: boolean }) => {
-        await api.authorInConf.authorInConfUpdate(
+    async ({ ConferenceId, authorId, is_corresponding }: { ConferenceId: number; authorId: number; is_corresponding: boolean }, { dispatch }) => {
+        await apiCallWithRefresh(dispatch, () => api.authorInConf.authorInConfUpdate(
             ConferenceId.toString(),
             authorId.toString(),
             { is_corresponding }
-        );
+        ));
     }
 );
 

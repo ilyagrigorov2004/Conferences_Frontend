@@ -5,6 +5,7 @@ import { Author } from "../api/Api";
 import { api } from "../api"; 
 import { AUTHORS_MOCK } from "../modules/Mock";
 import { setConferenceId, setAuthorsInConfCount } from './conferenceSlice';
+import { apiCallWithRefresh } from './userSlice';
 
 interface AuthorsState{
     SearchValue: string,
@@ -27,10 +28,10 @@ export const getAuthorsList = createAsyncThunk(
     async (_, { getState, dispatch, rejectWithValue }) => {
         const state = getState() as RootState;
         const authorsState = state.authors;
-        try{
-            const response = await api.authors.authorsList({
+        try {
+            const response = await apiCallWithRefresh(dispatch, () => api.authors.authorsList({
                 search_author: authorsState.SearchValue,
-            });
+            }));
 
             const DraftConfId = response.data.draft_conference_id;
             const AuthorsInConfCount = response.data.draft_conference_authors_count;
@@ -39,7 +40,7 @@ export const getAuthorsList = createAsyncThunk(
             dispatch(setAuthorsInConfCount(AuthorsInConfCount));
 
             return response.data;
-        }catch (error: any){
+        } catch (error: any) {
             return rejectWithValue(error.response.data.error || 'Ошибка при загрузке авторов');
         }
     }
@@ -47,9 +48,9 @@ export const getAuthorsList = createAsyncThunk(
 
 export const updateAuthor = createAsyncThunk(
     'authors/updateAuthor',
-    async (author: Author, {rejectWithValue}) => {
+    async (author: Author, { dispatch, rejectWithValue }) => {
         try{
-            const response = await api.author.authorUpdate(author.author_id?.toString() || '', author);
+            const response = await apiCallWithRefresh(dispatch, () => api.author.authorUpdate(author.author_id?.toString() || '', author));
             return response.data;
         }catch (error: any){
             return rejectWithValue(error.response.data.error || 'Ошибка при обновлении данных');
@@ -59,9 +60,9 @@ export const updateAuthor = createAsyncThunk(
 
 export const addAuthor = createAsyncThunk(
     'authors/addAuthor',
-    async (author: Author, { rejectWithValue }) => {
+    async (author: Author, { dispatch, rejectWithValue }) => {
         try {
-            const response = await api.authors.authorsCreate(author);
+            const response = await apiCallWithRefresh(dispatch, () => api.authors.authorsCreate(author));
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response.data.error || 'Ошибка при добавлении автора');
@@ -76,7 +77,7 @@ interface UploadImagePayload {
 
 export const uploadImage = createAsyncThunk(
     'images/upload',
-    async ({ id, file }: UploadImagePayload) => {
+    async ({ id, file }: UploadImagePayload, { dispatch }) => {
         if (!file) {
           throw new Error("Пожалуйста, выберите изображение для загрузки");
         }
@@ -84,18 +85,18 @@ export const uploadImage = createAsyncThunk(
         const formData = new FormData();
         formData.append('image', file); 
     
-        const response = await api.author.authorImgUploadCreate(id, {
+        const response = await apiCallWithRefresh(dispatch, () => api.author.authorImgUploadCreate(id, {
           body: formData,
-        });
+        }));
         return response.data;
       }
-  );
+);
 
   export const getAuthor = createAsyncThunk(
     'authors/getAuthor',
-    async (id: number, { rejectWithValue }) => {
+    async (id: number, { dispatch, rejectWithValue }) => {
         try {
-            const response = await api.author.authorRead(id.toString());
+            const response = await apiCallWithRefresh(dispatch, () => api.author.authorRead(id.toString()));
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response.data.error || 'Ошибка при загрузке данных автора');

@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 import { api } from '../api';
 import { RootState } from '../store';
+import { apiCallWithRefresh } from './userSlice';
 
 interface Conference {
     conference_id: number,
@@ -44,15 +45,15 @@ const initialState: ConferencesState = {
 
 export const getConferences = createAsyncThunk(
     'Conferences/getConferences',
-    async (_, { getState, rejectWithValue }) => {
+    async (_, { dispatch, getState, rejectWithValue }) => {
         const state = getState() as RootState;
         const conferencesState = state.conferences;
         try {
-            const response = await api.conferences.conferencesList({
+            const response = await apiCallWithRefresh(dispatch, () => api.conferences.conferencesList({
                 status: conferencesState.ConferencesSearchValues.status,
                 min_date_formed: conferencesState.ConferencesSearchValues.min_date_formed,
                 max_date_formed: conferencesState.ConferencesSearchValues.max_date_formed
-            });
+            }));
             return response.data;
         } catch (error) {
             return rejectWithValue('Ошибка при загрузке данных');
@@ -62,9 +63,9 @@ export const getConferences = createAsyncThunk(
 
 export const confirmConference = createAsyncThunk(
     'Conferences/confirmConference',
-    async (id: number, { rejectWithValue }) => {
+    async (id: number, { dispatch, rejectWithValue }) => {
         try {
-            const response = await api.conference.conferenceConfirmUpdate(id.toString(),  {"is_confirmed": 1});
+            const response = await apiCallWithRefresh(dispatch, () => api.conference.conferenceConfirmUpdate(id.toString(),  {"is_confirmed": 1}));
             return response.data;
         } catch (error) {
             return rejectWithValue('Ошибка при подтверждении конференции');
@@ -74,9 +75,9 @@ export const confirmConference = createAsyncThunk(
 
 export const rejectConference = createAsyncThunk(
     'Conferences/rejectConference',
-    async (id: number, { rejectWithValue }) => {
+    async (id: number, { dispatch, rejectWithValue }) => {
         try {
-            const response = await api.conference.conferenceConfirmUpdate(id.toString(),  {"is_confirmed": 0});
+            const response = await apiCallWithRefresh(dispatch, () => api.conference.conferenceConfirmUpdate(id.toString(),  {"is_confirmed": 0}));
             return response.data;
         } catch (error) {
             return rejectWithValue('Ошибка при отклонении конференции');

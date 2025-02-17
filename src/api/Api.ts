@@ -10,7 +10,7 @@
  */
 
 export interface Attribute {
-  /** ID */
+  /** Id */
   id?: number;
   /**
    * Name
@@ -19,13 +19,16 @@ export interface Attribute {
   name?: string;
 }
 
-export interface AttributeAuthor {
-  /** ID */
-  id?: number;
+export interface AttrInAuthorResp {
   /** Attr id */
-  attr_id?: number;
+  attr_id: number;
   /** Author id */
-  author_id?: number;
+  author_id: number;
+  /**
+   * Name
+   * @minLength 1
+   */
+  name: string;
   /**
    * Value
    * @minLength 1
@@ -220,6 +223,52 @@ export interface User {
   password: string;
 }
 
+export interface LogInResponse {
+  /**
+   * Token
+   * @minLength 1
+   */
+  token: string;
+  /**
+   * Refresh token
+   * @minLength 1
+   */
+  refresh_token: string;
+  /**
+   * Email
+   * @format email
+   * @minLength 1
+   */
+  email: string;
+  /**
+   * Username
+   * @minLength 1
+   */
+  username: string;
+  /** Is staff */
+  is_staff: boolean;
+  /** Is superuser */
+  is_superuser: boolean;
+  /**
+   * First name
+   * @minLength 1
+   */
+  first_name: string;
+  /**
+   * Last name
+   * @minLength 1
+   */
+  last_name: string;
+}
+
+export interface RefreshToken {
+  /**
+   * Refresh token
+   * @minLength 1
+   */
+  refresh_token: string;
+}
+
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
 import axios from "axios";
 
@@ -394,7 +443,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     attributeGetAuthorsAttrList: (authorId: string, params: RequestParams = {}) =>
-      this.request<AttributeAuthor, any>({
+      this.request<AttrInAuthorResp, any>({
         path: `/Attribute/${authorId}/getAuthorsAttr/`,
         method: "GET",
         secure: true,
@@ -758,7 +807,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     userLoginCreate: (data: User, params: RequestParams = {}) =>
-      this.request<User, any>({
+      this.request<LogInResponse, any>({
         path: `/User/login/`,
         method: "POST",
         body: data,
@@ -775,12 +824,29 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/User/logout/
      * @secure
      */
-    userLogoutCreate: (data: User, params: RequestParams = {}) =>
-      this.request<User, any>({
+    userLogoutCreate: (params: RequestParams = {}) =>
+      this.request<void, any>({
         path: `/User/logout/`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags User
+     * @name UserRefreshCreate
+     * @request POST:/User/refresh/
+     * @secure
+     */
+    userRefreshCreate: (data: RefreshToken, params: RequestParams = {}) =>
+      this.request<RefreshToken, any>({
+        path: `/User/refresh/`,
         method: "POST",
         body: data,
         secure: true,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),

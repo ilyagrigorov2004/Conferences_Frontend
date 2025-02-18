@@ -104,6 +104,7 @@ export const refreshTokenAsync = createAsyncThunk(
       }
       const response = await api.user.userRefreshCreate({ refresh_token });
       const { token, new_refresh_token } = response.data;
+      console.log(response.data)
       localStorage.setItem('token', token);
       localStorage.setItem('refresh_token', new_refresh_token);
       api.instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
